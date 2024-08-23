@@ -1,9 +1,22 @@
 #!/bin/bash
+MODEL_NAME=PP-OCRv4_mobile
+MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile"
+
+if [ -n "$1" ]; then
+  MODEL_NAME="$1"
+fi
+
+if ! echo "$MODEL_LIST" | grep -qw "$MODEL_NAME"; then
+  echo "Supported model: ${MODEL_LIST}"
+  echo "$MODEL_NAME is not in the support list. Exiting."
+  exit 1
+fi
+
 IMAGES_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/images/images.tar.gz"
 LABELS_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/labels/labels.tar.gz"
 CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
-DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
-REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
+DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/ocr/models/${MODEL_NAME}_det.tar.gz"
+REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/ocr/models/${MODEL_NAME}_rec.tar.gz"
 CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/config.tar.gz"
 MODELS_DIR="$(pwd)/models/"
 IMAGES_DIR="$(pwd)/images/"
