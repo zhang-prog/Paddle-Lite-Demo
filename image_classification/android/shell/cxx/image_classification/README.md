@@ -171,7 +171,7 @@ adb shell "cd ${ADB_DIR} \
           "
 
 第一个参数：image_classification 可执行文件，属于必选项
-第二个参数：./models/PP-LCNet_x1_0/model.nb 优化后的分类模型文件，属于必选项
+第二个参数：./models/${MODEL_NAME}/model.nb 优化后的模型文件，属于必选项
 第三个参数：./images/tabby_cat.jpg  测试图片，属于必选项
 第四个参数：./labels/labels.txt  label 文件，属于必选项
 第五个参数：3 top-k 大小，属于可选项，默认是 1

@@ -376,8 +376,8 @@ int main(int argc, char **argv) {
   std::string label_file = argv[3];
   std::vector<std::string> labels;
   load_labels(label_file, &labels);
-  int height = 513;
-  int width = 513;
+  int height = 512;
+  int width = 1024;
   int warmup = 0;
   int repeats = 1;
   int power_mode = 0;
