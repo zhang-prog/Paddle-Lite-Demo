@@ -169,7 +169,7 @@ adb shell "cd ${ADB_DIR} \
           && chmod +x ./image_classification \
           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
           && ./image_classification \
-            ./models/${MODEL_NAME}/model.nb \
+            \"./models/${MODEL_NAME}/model.nb\" \
             ./images/tabby_cat.jpg \
             ./labels/labels.txt \
             3 224 224 \
@@ -256,7 +256,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-              ./models/${MODEL_NAME}/model.nb \
+              \"./models/${MODEL_NAME}/model.nb\" \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
@@ -267,7 +267,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-              ./models/${MODEL_NAME}/model.nb \
+              \"./models/${MODEL_NAME}/model.nb\" \
               ./images/tabby_cat.jpg \
               ./labels/labels_new.txt \
               3 224 224 \
@@ -279,7 +279,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-              ./models/${MODEL_NAME}/model.nb \
+              \"./models/${MODEL_NAME}/model.nb\" \
               ./images/tabby_cat.jpg \
               ./labels/labels_new.txt \
               3 224 224 \
@@ -302,7 +302,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-              ./models/${MODEL_NAME}/model.nb \
+              \"./models/${MODEL_NAME}/model.nb\" \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
@@ -313,7 +313,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-              ./models/${MODEL_NAME}/model.nb \
+              \"\"./models/${MODEL_NAME}/model.nb\"\" \
               ./images/dog.jpg \
               ./labels/labels.txt \
               3 224 224 \
