@@ -43,7 +43,7 @@ if [ "$MODEL_NAME" == "PicoDet-S" -o "$MODEL_NAME" == "PicoDet-L" ]; then
             && chmod +x ./picodet_detection \
             && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
             &&  ./picodet_detection \
-                ./models/\"${MODEL_NAME}\"/model.nb \
+                \"./models/${MODEL_NAME}/model.nb\" \
                 ./images/dog.jpg \
                 ./labels/coco_label_list.txt \
                 0.5 320 320 \
@@ -57,9 +57,9 @@ if [ "$MODEL_NAME" == "PicoDet_layout_1x" ]; then
             && chmod +x ./picodet_detection \
             && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
             &&  ./picodet_detection \
-                ./models/\"${MODEL_NAME}\"/model.nb \
+                \"./models/${MODEL_NAME}/model.nb\" \
                 ./images/paper.jpg \
-                ./labels/picodet_layout_label_list.txt \
+                ./labels/publaynet_lable_list.txt \
                 0.5 608 800 \
                 0 1 10 1 0 \
             "

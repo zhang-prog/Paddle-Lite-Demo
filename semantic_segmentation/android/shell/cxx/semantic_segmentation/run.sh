@@ -43,9 +43,9 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./semantic_segmentation \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./semantic_segmentation \
-               ./models/\"${MODEL_NAME}\"/model.nb    \
+               \"./models/${MODEL_NAME}/model.nb\"    \
                ./images/test.jpg   \
-               ./labels/label_list  \
+               ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
                0 10 10 0    \
                "

@@ -32,8 +32,8 @@ adb shell "cd ${ppocr_demo_path} \
            && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
            && ./ppocr_demo \
-                ./models/\"${MODEL_NAME}\"_det.nb \
-                ./models/\"${MODEL_NAME}\"_rec.nb \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"./models/${MODEL_NAME}_rec.nb\" \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
