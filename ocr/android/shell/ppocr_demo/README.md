@@ -1,14 +1,38 @@
-# OOCR 文字识别 Demo 使用指南
-在 Android Shell 环境下，实现实时的 OCR 文字识别功能。此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
-本文主要介绍 OCR 文字识别 Demo 的运行方法和如何在更新模型/输入/输出处理下，保证 Demo 仍可继续运行。
+# OCR 文字识别 demo 使用指南
 
-## 如何运行 OCR 文字识别 Demo
+- [快速开始](#快速开始)
+  - [环境准备](#环境准备)
+  - [部署步骤](#部署步骤)
+- [代码介绍](#代码介绍)
+- [工程详解](#工程详解)
+- [进阶使用](#进阶使用)
+  - [更新预测库](#更新预测库) 
+  - [更新模型、输入和输出预处理](#更新模型输入和输出预处理)
+    - [更新模型](#更新模型)
+    - [更新输入/输出预处理](#更新输入输出预处理)
+
+本指南主要介绍 PaddleX 端侧部署——OCR文字识别 demo 在 Android shell 上的运行方法。
+本指南适配了 2 个 OCR 模型：
+- PP-OCRv3_mobile
+- PP-OCRv4_mobile
+
+## 快速开始
 
 ### 环境准备
 
-1. 在本地环境安装好 CMAKE 编译工具，并在 [Android NDK 官网](https://developer.android.google.cn/ndk/downloads)下载当前系统的某个版本的 NDK 软件包。例如，在 Mac 上开发，需要在 Android NDK 官网下载 Mac 平台的 NDK 软件包。
+1. 在本地环境安装好 CMAKE 编译工具，并在 [Android NDK 官网](https://developer.android.google.cn/ndk/downloads)下载当前系统的某个版本的 NDK 软件包。例如，在 Mac 上开发，需要在 Android NDK 官网下载 Mac 平台的 NDK 软件包
+
+    **环境要求**
+    -  `CMake >= 3.10`（最低版本未经验证，推荐 3.20 及以上）
+    -  `Android NDK >= r17c`（最低版本未经验证，推荐 r20b 及以上）
+
+    **本指南所使用的测试环境：**
+    -  `cmake == 3.20.0`
+    -  `android-ndk == r20b`
+
 2. 准备一部 Android 手机，并开启 USB 调试模式。开启方法: `手机设置 -> 查找开发者选项 -> 打开开发者选项和 USB 调试模式`
-3. 电脑上安装 adb 工具，用于调试。 adb安装方式如下：
+
+3. 电脑上安装 ADB 工具，用于调试。ADB 安装方式如下：
 
     3.1. Mac 电脑安装 ADB:
 
@@ -23,7 +47,7 @@
     sudo apt install -y wget adb
     ```
 
-    3.3. Window 安装 ADB
+    3.3. Windows 安装 ADB
 
     win 上安装需要去谷歌的安卓平台下载 ADB 软件包进行安装：[链接](https://developer.android.com/studio)
 
@@ -36,112 +60,123 @@
     如果有 device 输出，则表示安装成功。
 
     ```shell
-       List of devices attached
-       744be294    device
+    List of devices attached
+    744be294    device
     ```
 
 ### 部署步骤
 
-1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录
-2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
-3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录，先在 `build.sh` 脚本中，完成 NDK_ROOT 路径设置；然后运行 `build.sh` 脚本，完成可执行文件的编译和运行。
-> **注意事项：**
->> - 如果是在 Linux 主机编译，请选择 Linux 版本的 NDK 进行设置
->> - 如果是在 Mac 主机编译，请选择 Mac 版本的 NDK 进行设置；另外，同步更新 `CMakeList.txt` 里的 `CMAKE_SYSTEM_NAME` 变量，更新为 `drawn`
+克隆 `Paddle-Lite-Demo` 仓库的 `feature/paddle-x` 分支到 `PaddleX-Lite-Deploy` 目录。
 
-5. 其推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到），其效果如下图所示：
-
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
-
-```shell
-cd Paddle-Lite-Demo/libs
-# 下载所需要的 Paddle Lite 预测库
-sh download.sh
-cd ../ocr/assets
-# 下载OPT 优化后模型、测试图片、标签文件及 config 文件
-sh download.sh
-cd ../android/shell/ppocr_demo
-# 完成可执行文件的编译, 默认编译 V8 可执行文件； 如需 V7 可执行文件，可修改 build.sh 脚本中 ARM_ABI 变量即可
-# 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
-# 更新 NDK_ROOT 路径，然后完成可执行文件的编译和运行
-sh build.sh
-# CMakeList.txt 里的 System 默认设置是linux；如果在Mac 运行，则需将 CMAKE_SYSTEM_NAME 变量设置为 drawn
+```
+git clone -b feature/paddle-x https://github.com/PaddlePaddle/Paddle-Lite-Demo.git PaddleX_Lite_Deploy
 ```
 
-## 如何更新预测库
+1. 将工作目录切换到 `PaddleX-Lite-Deploy/libs` 目录，运行 `download.sh` 脚本，下载需要的 Paddle Lite 预测库。此步骤只需执行一次，即可支持每个 demo 使用。
 
-* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)，编译 Android 预测库
- * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
-    * 替换 c++ 库
-        * 头文件
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/include`
-        * armeabi-v7a
-          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
-        * arm64-v8a
-          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+2. 将工作目录切换到 `PaddleX-Lite-Deploy/ocr/assets` 目录，运行 `download.sh` 脚本，下载 [paddle_lite_opt 工具](https://www.paddlepaddle.org.cn/lite/v2.10/user_guides/model_optimize_tool.html) 优化后的模型文件。
 
-注意：
-如果预测库有版本升级，建议同步更新 OPT 优化后的模型。例如，预测库升级至 2.10—rc 版本，需要做以下操作：
+3. 将工作目录切换到 `PaddleX-Lite-Deploy/ocr/android/shell/cxx/ppocr_demo` 目录，运行 `build.sh` 脚本，完成可执行文件的编译。
 
+4. 将工作目录切换到 `PaddleX-Lite-Deploy/ocr/android/shell/cxx/ppocr_demo`，运行 `run.sh` 脚本，完成在端侧的预测。
+
+**注意事项：**
+  - 在运行 `build.sh` 脚本前，需要更改 `NDK_ROOT` 指定的路径为实际安装的 NDK 路径。
+  - 若在 Mac 系统上编译，需要将 `CMakeLists.txt` 中的 `CMAKE_SYSTEM_NAME` 设置为 `darwin`。
+  - 在运行 `run.sh` 脚本时需保持 ADB 连接。
+  - `download.sh` 和 `run.sh` 支持传入参数来指定模型，若不指定则默认使用 `PP-OCRv4_mobile` 模型。目前适配了 2 个模型： 
+    - `PP-OCRv3_mobile`
+    - `PP-OCRv4_mobile`
+
+以下为实际操作时的示例：
 ```shell
-# 下载 PaddleOCR V2.0 版本的中英文 inference 模型
-wget  https://paddleocr.bj.bcebos.com/dygraph_v2.0/slim/ch_ppocr_mobile_v2.0_det_slim_infer.tar && tar xf  ch_ppocr_mobile_v2.0_det_slim_infer.tar
-wget  https://paddleocr.bj.bcebos.com/dygraph_v2.0/slim/ch_ppocr_mobile_v2.0_rec_slim_infer.tar && tar xf  ch_ppocr_mobile_v2.0_rec_slim_infer.tar
-wget  https://paddleocr.bj.bcebos.com/dygraph_v2.0/slim/ch_ppocr_mobile_v2.0_cls_slim_infer.tar && tar xf  ch_ppocr_mobile_v2.0_cls_slim_infer.tar
-# 获取 2.10 版本的 MAC 系统的 OPT 工具
-wget https://github.com/PaddlePaddle/Paddle-Lite/releases/download/v2.10-rc/opt_mac
-# 转换 V2.0 检测模型
-./opt --model_file=./ch_ppocr_mobile_v2.0_det_slim_infer/inference.pdmodel  --param_file=./ch_ppocr_mobile_v2.0_det_slim_infer/inference.pdiparams  --optimize_out=./ch_ppocr_mobile_v2.0_det_slim_opt --valid_targets=arm  --optimize_out_type=naive_buffer
-# 转换 V2.0 识别模型
-./opt --model_file=./ch_ppocr_mobile_v2.0_rec_slim_infer/inference.pdmodel  --param_file=./ch_ppocr_mobile_v2.0_rec_slim_infer/inference.pdiparams  --optimize_out=./ch_ppocr_mobile_v2.0_rec_slim_opt --valid_targets=arm  --optimize_out_type=naive_buffer
-# 转换 V2.0 方向分类器模型
-./opt --model_file=./ch_ppocr_mobile_v2.0_cls_slim_infer/inference.pdmodel  --param_file=./ch_ppocr_mobile_v2.0_cls_slim_infer/inference.pdiparams  --optimize_out=./ch_ppocr_mobile_v2.0_cls_slim_opt --valid_targets=arm  --optimize_out_type=naive_buffer
+ # 1. 下载需要的 Paddle Lite 预测库
+ cd PaddleX-Lite-Deploy/libs
+ sh download.sh
+
+ # 2. 下载 paddle_lite_opt 工具优化后的模型文件
+ cd ../ocr/assets
+ sh download.sh PP-OCRv4_mobile
+
+ # 3. 完成可执行文件的编译
+ cd ../android/shell/ppocr_demo
+ sh build.sh
+
+# 4. 预测
+ sh run.sh PP-OCRv4_mobile
 ```
 
-## Demo 代码介绍
+运行结果如下所示：
 
-Demo 的整体目录结构如下图所示：
+```text
+The detection visualized image saved in ./test_img_result.jpg
+0       纯臻营养护发素  0.993706
+1       产品信息/参数   0.991224
+2       （45元/每公斤，100公斤起订）    0.938893
+3       每瓶22元，1000瓶起订）  0.988353
+4       【品牌】：代加工方式/OEMODM     0.97557
+5       【品名】：纯臻营养护发素        0.986914
+6       ODMOEM  0.929891
+7       【产品编号】：YM-X-3011 0.964156
+8       【净含量】：220ml       0.976404
+9       【适用人群】：适合所有肤质      0.987942
+10      【主要成分】：鲸蜡硬脂醇、燕麦β-葡聚    0.968315
+11      糖、椰油酰胺丙基甜菜碱、泛醒    0.941537
+12      （成品包材）    0.974796
+13      【主要功能】：可紧致头发磷层，从而达到  0.988799
+14      即时持久改善头发光泽的效果，给干燥的头  0.989547
+15      发足够的滋养    0.998413
+``` 
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/android/predict_android_shell.jpg"/></p>
+![预测结果](../../../../docs_img/ocr/PP-OCRv4_mobile.jpg)
 
-1. `Paddle-Lite-Demo/libs/` : 存放不同端的预测库和OpenCL库，如android、iOS等
+## 代码介绍
+
+```
+.
+├── ...
+├── ocr 
+│    ├── ...
+│    ├── android
+│    │    ├── ...
+│    │    └── shell
+│    │        └── ppocr_demo
+│    │            ├── src # 存放预测代码
+│    │            |   ├── cls_process.cc # 方向分类器的推理全流程，包含预处理、预测和后处理三部分
+│    │            |   ├── rec_process.cc # 识别模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
+│    │            |   ├── det_process.cc # 检测模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
+│    │            |   ├── det_post_process.cc # 检测模型 DB 的后处理文件
+│    │            |   ├── pipeline.cc # OCR 文字识别 demo 推理全流程代码
+│    │            |   └── MakeFile # 预测代码的 MakeFile 文件
+│    │            |   
+│    │            ├── CMakeLists.txt # CMake 文件，约束可执行文件的编译方法
+│    │            ├── README.md
+│    │            ├── build.sh # 用于可执行文件的编译
+│    │            └── run.sh # 用于预测
+│    └── assets # 存放模型、测试图片、标签文件、config 文件
+│        ├── images
+│        ├── labels
+│        ├── models
+│        ├── config.txt
+│        └── download.sh # 下载脚本，用于下载 paddle_lite_opt 工具优化后的模型
+└── libs # 存放不同端的预测库和 OpenCV 库。
+    ├── ...
+    └── download.sh # 下载脚本，用于下载 Paddle Lite 预测库和 OpenCV 库
+```
 
 **备注：**
-  如需更新预测库，例如更新 Android CXX v8 动态库 so，则将新的动态库 so 更新到 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a` 目录
 
-2. `Paddle-Lite-Demo/ocr/assets/` : 存放 OCR demo 的模型、测试图片、标签文件及 config 文件
-
-**备注：**
-
- - `Paddle-Lite-Demo/ocr/assets/labels/ppocr_keys_v1.txt` 是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
+ - `PaddleX-Lite-Deploy/ocr/assets/labels/ppocr_keys_v1.txt` 是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
  - 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
 
-3. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/src` : 存放预测代码
-    - `cls_process.cc` : 方向分类器的推理全流程，包含预处理、预测和后处理三部分
-    - `rec_process.cc` : 识别模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
-    - `det_process.cc` : 检测模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
-    - `det_post_process` : 检测模型 DB 的后处理文件
-    - `pipeline.cc` : OCR 文字识别 Demo 推理全流程代码
-    - `MakeFile` : 预测代码的 MakeFile 文件
-
-4. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh` : 用于可执行文件的编译和运行
-
 ```shell
-# 位置
-Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh # 脚本默认编译 armv8 可执行文件
-# 如果要编译 armv7 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 armeabi-v7a 即可
-# 包含 run.sh 运行脚本，用于可执行文件的运行
-# 位置
-Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh
-# 脚本中可执行文件的参数含义：
+# run.sh 脚本中可执行文件的参数含义：
 adb shell "cd ${ppocr_demo_path} \
            && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
            && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"./models/${MODEL_NAME}_rec.nb\" \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
@@ -149,13 +184,16 @@ adb shell "cd ${ppocr_demo_path} \
                 ./config.txt"
 
 第一个参数：ppocr_demo 可执行文件
-第二个参数：./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb 优化后的检测模型文件
-第三个参数：./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb 优化后的识别模型文件
+第二个参数：./models/${MODEL_NAME}_det.nb 优化后的检测模型文件
+第三个参数：./models/${MODEL_NAME}_rec.nb 优化后的识别模型文件
 第四个参数：./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb 优化后的文字方向分类器模型文件
 第五个参数：./images/test.jpg  测试图片
 第六个参数：./test_img_result.jpg  结果保存文件
 第七个参数：./labels/ppocr_keys_v1.txt  label 文件，中文字典文件
 第八个参数：./config.txt  配置文件，模型的超参数配置文件，包含了检测器、分类器的超参数
+```
+
+```shell
 # config.txt 具体参数 List：
 max_side_len  960         # 输入图像长宽大于 960 时，等比例缩放图像，使得图像最长边为 960
 det_db_thresh  0.3        # 用于过滤 DB 预测的二值化图像，设置为 0.3 对结果影响不明显
@@ -164,184 +202,11 @@ det_db_unclip_ratio  1.6  # 表示文本框的紧致程度，越小则文本框�
 use_direction_classify  0  # 是否使用方向分类器，0 表示不使用，1 表示使用
 ```
 
-## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
+## 工程详解
 
-该示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。
-更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
+OCR 文字识别 demo 由三个模型一起完成 OCR 文字识别功能，对输入图片先通过 `${MODEL_NAME}_det.nb` 模型做检测处理，然后通过 `ch_ppocr_mobile_v2.0_cls_slim_opt.nb` 模型做文字方向分类处理，最后通过 `${MODEL_NAME}_rec.nb` 模型完成文字识别处理。
 
-```c++
-#include <iostream>
-// 引入 C++ API
-#include "include/paddle_api.h"
-#include "include/paddle_use_ops.h"
-#include "include/paddle_use_kernels.h"
-
-// 1. 设置 MobileConfig
-MobileConfig config;
-config.set_model_from_file(modelPath); // 设置 NaiveBuffer 格式模型路径
-config.set_power_mode(LITE_POWER_NO_BIND); // 设置 CPU 运行模式
-config.set_threads(4); // 设置工作线程数
-
-// 2. 创建 PaddlePredictor
-std::shared_ptr<PaddlePredictor> predictor = CreatePaddlePredictor<MobileConfig>(config);
-
-// 3. 设置输入数据
-std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
-input_tensor->Resize({1, 3, 224, 224});
-auto* data = input_tensor->mutable_data<float>();
-for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i) {
-  data[i] = 1;
-}
-// 如果输入是图片，则可在第三步时将预处理后的图像数据赋值给输入 Tensor
-// image_data -> input_tensor->mutable_data<float>();
-
-// 4. 执行预测
-predictor->run();
-
-// 5. 获取输出数据
-std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
-std::cout << "Output shape " << output_tensor->shape()[1] << std::endl;
-for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
-  std::cout << "Output[" << i << "]: " << output_tensor->data<float>()[i]
-            << std::endl;
-}
-```
-
-## 如何更新模型、输入/输出预处理
-
-### 更新模型
-
-1. 将优化后的新模型存放到目录 `Paddle-Lite-Demo/ocr/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh` 中执行命令；
-
-以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assets/models/ssd_mv3.nb` 下，然后更新执行脚本
-
-```shell
-# 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh`
-# old
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/test.jpg \
-                ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
-                ./config.txt"
-# update
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ssd_mv3.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/test.jpg \
-                ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
-                ./config.txt"
-```
-
-**注意：**
-
-- 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
-
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
-
-- 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
-
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
-
-
-- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新方法更新 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/rush.sh` 中执行命令；
-
-```shell
-# 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh`
-# old
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/test.jpg \
-                ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
-                ./config.txt"
-# update
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/test.jpg \
-                ./test_img_result.jpg \
-                ./labels/new_labels.txt \
-                ./config.txt"
-```
-
-### 更新输入/输出预处理
-
-1. 更新输入数据
-
-- 将更新的图片存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下；
-- 更新文件 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/rush.sh` 中执行命令；
-
-以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下，然后更新脚本
-
-```shell
-# 代码文件 `Paddle-Lite-Demo/ocr/assets/images/run.sh`
-## old
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/test.jpg \
-                ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
-                ./config.txt"
-# update
-adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./ppocr_demo \
-           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ppocr_demo \
-                ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
-                ./images/new_pics.jpg \
-                ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
-                ./config.txt"
-```
-
-2. 更新输入预处理
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
-
-3. 更新输出预处理
-
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
-
-## OCR 文字识别 Demo 工程详解
-
-OCR 文字识别 Demo 由三个模型一起完成 OCR 文字识别功能，对输入图片先通过 `ch_ppocr_mobile_v2.0_det_slim_opt.nb` 模型做检测处理，然后通过 `ch_ppocr_mobile_v2.0_cls_slim_opt.nb` 模型做文字方向分类处理，最后通过 `ch_ppocr_mobile_v2.0_rec_slim_opt.nb` 模型完成文字识别处理。
-
-1. `pipeline.cc` : OCR 文字识别 Demo 预测全流程代码
+1. `pipeline.cc` : OCR 文字识别 demo 预测全流程代码
   该文件完成了三个模型串行推理的全流程控制处理，包含整个处理过程的调度处理。
 
   - `Pipeline::Pipeline(...)` 方法完成调用三个模型类构造函数，完成模型加载和线程数、绑核处理及 predictor 创建处理
@@ -374,5 +239,148 @@ OCR 文字识别 Demo 由三个模型一起完成 OCR 文字识别功能，对�
   - `std::vector<std::vector<std::vector<int>>> BoxesFromBitmap(...)` 方法从 Bitmap 图中获取检测框
   - `std::vector<std::vector<std::vector<int>>> FilterTagDetRes(...)` 方法根据识别结果获取目标框位置
 
-## 性能优化方法
-如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
+## 进阶使用
+
+如果快速开始部分无法满足你的需求，可以参考本节对 demo 进行自定义修改。
+本节主要包含两部分： 更新预测库，更新模型、输入和输出预处理。
+
+### 更新预测库
+
+本指南所使用的预测库为最新版本（214rc），若需使用其他版本，可参考如下步骤：
+
+* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
+  * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)，编译 Android 预测库
+  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
+    * 替换 c++ 库
+        * 头文件
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 demo 中的 `PaddleX-Lite-Deploy/libs/android/cxx/include`
+        * armeabi-v7a
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 demo 中的 `PaddleX-Lite-Deploy/libs/android/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+        * arm64-v8a
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 demo 中的 `PaddleX-Lite-Deploy/libs/android/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+
+### 更新模型、输入/输出预处理
+
+#### 更新模型
+
+本指南只对 `PP-OCRv3_mobile`、`PP-OCRv4_mobile` 模型进行了验证，其他模型不保证适用性。
+本节以更新 `PP-OCRv3_mobile` 模型为例，其他模型可参考以下步骤：
+
+1. 将优化后的 `PP-OCRv3_mobile` 模型存放到目录 `PaddleX-Lite-Deploy/ocr/assets/models/` 下，最终得到的文件结构如下：
+
+```text
+.
+├── ocr 
+│    ├── ...
+│    └── assets 
+│        ├── models
+│        │   ├── ...
+│        │   ├── PP-OCRv3_mobile_det.nb 
+│        │   └── PP-OCRv3_mobile_rec.nb 
+│        └── ...
+└── ...
+```
+
+2. 将模型名加入到 `run.sh` 脚本中的 `MODEL_LIST`。
+
+```shell
+MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile" # 模型之间以单个空格为间隔
+```
+
+3. 运行 `run.sh` 脚本时使用模型目录名。
+
+```shell
+sh run.sh PP-OCRv3_mobile
+```
+
+**注意：**
+
+- 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
+
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+
+- 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
+
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+
+- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `PaddleX-Lite-Deploy/ocr/assets/labels/` 下，并参考模型更新方法更新 `PaddleX-Lite-Deploy/ocr/android/shell/ppocr_demo/rush.sh` 中执行命令；
+
+```shell
+# 代码文件 `PaddleX-Lite-Deploy/ocr/android/shell/ppocr_demo/run.sh`
+# old
+adb shell "cd ${ppocr_demo_path} \
+           && chmod +x ./ppocr_demo \
+           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
+           && ./ppocr_demo \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"./models/${MODEL_NAME}_rec.nb\" \
+                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
+                ./images/test.jpg \
+                ./test_img_result.jpg \
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
+# update
+adb shell "cd ${ppocr_demo_path} \
+           && chmod +x ./ppocr_demo \
+           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
+           && ./ppocr_demo \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"./models/${MODEL_NAME}_rec.nb\" \
+                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
+                ./images/test.jpg \
+                ./test_img_result.jpg \
+                ./labels/new_labels.txt \
+                ./config.txt"
+```
+
+#### 更新输入/输出预处理
+
+1. 更新输入数据
+
+- 将更新的图片存放在 `PaddleX-Lite-Deploy/ocr/assets/images/` 下；
+- 更新文件 `PaddleX-Lite-Deploy/ocr/android/shell/ppocr_demo/rush.sh` 中执行命令；
+
+以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `PaddleX-Lite-Deploy/ocr/assets/images/` 下，然后更新脚本
+
+```shell
+# 代码文件 `PaddleX-Lite-Deploy/ocr/assets/images/run.sh`
+## old
+adb shell "cd ${ppocr_demo_path} \
+           && chmod +x ./ppocr_demo \
+           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
+           && ./ppocr_demo \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"./models/${MODEL_NAME}_rec.nb\" \
+                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
+                ./images/test.jpg \
+                ./test_img_result.jpg \
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
+# update
+adb shell "cd ${ppocr_demo_path} \
+           && chmod +x ./ppocr_demo \
+           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
+           && ./ppocr_demo \
+                \"./models/${MODEL_NAME}_det.nb\" \
+                \"\"./models/${MODEL_NAME}_rec.nb\"\" \
+                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
+                ./images/new_pics.jpg \
+                ./test_img_result.jpg \
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
+```
+
+2. 更新输入预处理
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+
+3. 更新输出预处理
+
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
