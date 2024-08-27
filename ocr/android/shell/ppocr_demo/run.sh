@@ -8,8 +8,8 @@ if [ -n "$1" ]; then
 fi
 
 if ! echo "$MODEL_LIST" | grep -qw "$MODEL_NAME"; then
-  echo "Supported model: ${MODEL_LIST}"
-  echo "$MODEL_NAME is not in the support list. Exiting."
+  echo "Supported models: ${MODEL_LIST}"
+  echo "$MODEL_NAME is not in the supported models. Now exiting."
   exit 1
 fi
 
@@ -32,8 +32,8 @@ adb shell "cd ${ppocr_demo_path} \
            && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
            && ./ppocr_demo \
-                ./models/${MODEL_NAME}_det.nb \
-                ./models/${MODEL_NAME}_rec.nb \
+                ./models/\"${MODEL_NAME}\"_det.nb \
+                ./models/\"${MODEL_NAME}\"_rec.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \

@@ -7,8 +7,8 @@ if [ -n "$1" ]; then
 fi
 
 if ! echo "$MODEL_LIST" | grep -qw "$MODEL_NAME"; then
-  echo "Supported model: ${MODEL_LIST}"
-  echo "$MODEL_NAME is not in the support list. Exiting."
+  echo "Supported models: ${MODEL_LIST}"
+  echo "$MODEL_NAME is not in the supported models. Now exiting."
   exit 1
 fi
 
@@ -16,11 +16,7 @@ PADDLE_LITE_DIR="$(pwd)/../../../../../libs/android/cxx"
 OPENCV_LITE_DIR="$(pwd)/../../../../../libs/android/opencv4.1.0"
 ASSETS_DIR="$(pwd)/../../../../assets"
 ADB_DIR="/data/local/tmp/semantic_segmentation"
-ARM_ABI=arm64-v8a # arm64-v8a or armeabi-v7a
-
-if [ -n "$2" ]; then
-  ARM_ABI="$2"
-fi
+ARM_ABI="${2:-arm64-v8a}" # arm64-v8a or armeabi-v7a
 
 if [ ! -d "${ASSETS_DIR}/models/${MODEL_NAME}" ];then
   echo "Model $MODEL_NAME not found! "
@@ -47,7 +43,7 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./semantic_segmentation \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./semantic_segmentation \
-               ./models/${MODEL_NAME}/model.nb    \
+               ./models/\"${MODEL_NAME}\"/model.nb    \
                ./images/test.jpg   \
                ./labels/label_list  \
                1024 512 4    \
