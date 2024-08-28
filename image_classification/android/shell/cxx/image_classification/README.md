@@ -12,8 +12,8 @@
 
 本指南主要介绍 PaddleX 端侧部署——图像分类 demo 在 Android shell 上的运行方法。
 本指南适配了 2 个图像分类模型：
-- PP-LCNet_x1_0
-- MobileNetV3_small_x1_0
+- PP-LCNet_x1_0（cpu & gpu）
+- MobileNetV3_small_x1_0（cpu & gpu）
 
 ## 快速开始
 
@@ -84,8 +84,8 @@ git clone -b feature/paddle-x https://github.com/PaddlePaddle/Paddle-Lite-Demo.g
   - 若在 Mac 系统上编译，需要将 `CMakeLists.txt` 中的 `CMAKE_SYSTEM_NAME` 设置为 `darwin`。
   - 在运行 `run.sh` 脚本时需保持 ADB 连接。
   - `download.sh` 和 `run.sh` 支持传入参数来指定模型，若不指定则默认使用 `PP-LCNet_x1_0` 模型。目前适配了 2 个模型： 
-    - `PP-LCNet_x1_0`
-    - `MobileNetV3_small_x1_0`
+    - `PP-LCNet_x1_0`、`PP-LCNet_x1_0_gpu`
+    - `MobileNetV3_small_x1_0`、`MobileNetV3_small_x1_0_gpu`
 
 以下为实际操作时的示例：
 ```shell

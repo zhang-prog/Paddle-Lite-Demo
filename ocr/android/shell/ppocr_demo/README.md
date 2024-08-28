@@ -13,8 +13,8 @@
 
 本指南主要介绍 PaddleX 端侧部署——OCR文字识别 demo 在 Android shell 上的运行方法。
 本指南适配了 2 个 OCR 模型：
-- PP-OCRv3_mobile
-- PP-OCRv4_mobile
+- PP-OCRv3_mobile（cpu）
+- PP-OCRv4_mobile（cpu）
 
 ## 快速开始
 
