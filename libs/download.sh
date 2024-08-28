@@ -1,9 +1,11 @@
 #!/bin/bash
-# newest lib
-ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/libs/android/paddle_lite_libs_v2_14_rc.tar.gz"
-# only cpu lib
+# newest cpu lib
+# ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/libs/android/paddle_lite_libs_v2_14_rc.tar.gz"
+# best choice: newest cpu + gpu lib
+ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/libs/android/paddle_lite_libs_v2_14_rc_gpu.tar.gz"
+# 210rc cpu lib
 # ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_rc.tar.gz"
-# cpu + gpu lib
+# 210rc cpu + gpu lib
 # ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_gpu.tar.gz"
 # cpu lib
 IOS_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2_10_rc.tar.gz"
