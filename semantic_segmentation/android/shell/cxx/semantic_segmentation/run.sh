@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL_NAME=PP-LiteSeg-T
-MODEL_LIST="PP-LiteSeg-T"
+MODEL_LIST="PP-LiteSeg-T PP-LiteSeg-T_gpu"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
@@ -47,6 +47,6 @@ adb shell "cd ${ADB_DIR} \
                ./images/test.jpg   \
                ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 adb pull ${ADB_DIR}/result.jpg ./

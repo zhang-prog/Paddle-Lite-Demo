@@ -168,7 +168,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/test.jpg   \
                ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 
  第一个参数：semantic_segmentation 可执行文件，属于必选项
@@ -181,7 +181,6 @@ adb shell "cd ${ADB_DIR} \
  第八个参数：0 是否绑核，0-绑定大核， 1-绑定小核，2-绑定所有核，3-不绑核，属于可选项，默认是 0
  第九个参数：10 repeats 数目，属于可选项，默认是 1
  第十个参数：10 warmup 数目，属于可选项，默认是 0
- 第十一个参数：0 use_gpu 是否使用GPU， 属于可选项，默认是 0
 ```
 
 ## 进阶使用
@@ -254,7 +253,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/test.jpg   \
                ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -265,7 +264,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/test.jpg   \
                ./labels/new_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 ```
 
@@ -289,7 +288,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/test.jpg   \
                ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -300,7 +299,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/cityscapes.jpg   \
                ./labels/cityscapes_label_list.txt  \
                1024 512 4    \
-               0 10 10 0    \
+               0 10 10     \
                "
 ```
 

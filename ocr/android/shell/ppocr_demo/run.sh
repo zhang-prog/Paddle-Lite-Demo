@@ -24,6 +24,11 @@ if [ ! -f "${ASSETS_DIR}/models/${MODEL_NAME}_rec.nb" ];then
 fi
 
 # push
+cp -r ../../../assets/config.txt ./ppocr_demo
+cp -r ../../../assets/labels ./ppocr_demo
+cp -r ../../../assets/images ./ppocr_demo
+cp -r ../../../assets/models ./ppocr_demo
+
 adb push ./ppocr_demo /data/local/tmp/
 ppocr_demo_path="/data/local/tmp/ppocr_demo"
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL_NAME=PP-LiteSeg-T
-MODEL_LIST="PP-LiteSeg-T"
+MODEL_LIST="PP-LiteSeg-T PP-LiteSeg-T_gpu"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"

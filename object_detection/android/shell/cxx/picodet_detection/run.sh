@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL_NAME=PicoDet-S
-MODEL_LIST="PicoDet-S PicoDet-L PicoDet_layout_1x"
+MODEL_LIST="PicoDet-S PicoDet-L PicoDet_layout_1x PicoDet-S_gpu PicoDet-L_gpu PicoDet_layout_1x_gpu"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
@@ -38,21 +38,7 @@ adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
 adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
 
 # run
-if [ "$MODEL_NAME" == "PicoDet-S" -o "$MODEL_NAME" == "PicoDet-L" ]; then
-  adb shell "cd ${ADB_DIR} \
-            && chmod +x ./picodet_detection \
-            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-            &&  ./picodet_detection \
-                \"./models/${MODEL_NAME}/model.nb\" \
-                ./images/dog.jpg \
-                ./labels/coco_label_list.txt \
-                0.5 320 320 \
-                0 1 10 1 0 \
-            "
-  adb pull ${ADB_DIR}/dog_picodet_detection_result.jpg ./
-fi 
-
-if [ "$MODEL_NAME" == "PicoDet_layout_1x" ]; then
+if [ "$MODEL_NAME" == "PicoDet_layout_1x" -o "$MODEL_NAME" == "PicoDet_layout_1x_gpu" ]; then
   adb shell "cd ${ADB_DIR} \
             && chmod +x ./picodet_detection \
             && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
@@ -61,7 +47,19 @@ if [ "$MODEL_NAME" == "PicoDet_layout_1x" ]; then
                 ./images/paper.jpg \
                 ./labels/publaynet_lable_list.txt \
                 0.5 608 800 \
-                0 1 10 1 0 \
+                0 1 10 1  \
             "
   adb pull ${ADB_DIR}/paper_picodet_detection_result.jpg ./
+else
+  adb shell "cd ${ADB_DIR} \
+            && chmod +x ./picodet_detection \
+            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
+            &&  ./picodet_detection \
+                \"./models/${MODEL_NAME}/model.nb\" \
+                ./images/dog.jpg \
+                ./labels/coco_label_list.txt \
+                0.5 320 320 \
+                0 1 10 1  \
+            "
+  adb pull ${ADB_DIR}/dog_picodet_detection_result.jpg ./
 fi

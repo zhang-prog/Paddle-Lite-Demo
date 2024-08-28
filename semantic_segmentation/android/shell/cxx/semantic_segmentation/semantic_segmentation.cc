@@ -361,8 +361,8 @@ int main(int argc, char **argv) {
     exit(1);
   }
   std::cout << "This parameters are optional: \n"
-            << " <input_width>, eg: 224 \n"
-            << " <input_height>, eg: 224 \n"
+            << " <input_width>, eg: 1024 \n"
+            << " <input_height>, eg: 512 \n"
             << "  <power_mode>, 0: big cluster, high performance\n"
                "                1: little cluster\n"
                "                2: all cores\n"
@@ -398,9 +398,6 @@ int main(int argc, char **argv) {
   }
   if (argc > 9) {
     warmup = atoi(argv[9]);
-  }
-  if (argc > 10) {
-    use_gpu = atoi(argv[10]);
   }
 
   run_model(model_file, img_path, labels, width, height, power_mode, thread_num,

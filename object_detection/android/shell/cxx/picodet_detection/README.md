@@ -177,7 +177,7 @@ neon_mean_scale(...): 完成图像数据赋值给Tensor的加速处理功能
                ./images/dog.jpg \
                ./labels/coco_label_list.txt \
                0.5 320 320 \
-               0 1 10 1 0 \
+               0 1 10 1  \
            "
 
  第一个参数：picodet_detection 可执行文件，属于必选项
@@ -191,7 +191,6 @@ neon_mean_scale(...): 完成图像数据赋值给Tensor的加速处理功能
  第九个参数：1 线程数，属于可选项，默认是 1
  第十个参数：10 repeats 数目，属于可选项，默认是 1
  第十一个参数：1 warmup 数目，属于可选项，默认是 0
- 第十二个参数：0 是否使用 GPU，属于可选项，默认是 0
 ```
 
 ## 进阶使用
@@ -264,7 +263,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/dog.jpg \
                ./labels/coco_label_list.txt \
                0.5 320 320 \
-               0 1 100 5 0 \
+               0 1 100 5  \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -275,7 +274,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/dog.jpg \
                ./labels/new_label.txt \
                0.5 320 320 \
-               0 1 100 5 0 \
+               0 1 100 5  \
           "
 ```
 
@@ -298,7 +297,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/dog.jpg \
                ./labels/coco_label_list.txt \
                0.5 320 320 \
-               0 1 100 5 0 \
+               0 1 100 5  \
           "
 # now
 "cd ${ADB_DIR} \
@@ -309,7 +308,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/cat.jpg \
                ./labels/coco_label_list.txt \
                0.5 320 320 \
-               0 1 100 5 0 \
+               0 1 100 5  \
           "
 ```
 

@@ -173,7 +173,7 @@ adb shell "cd ${ADB_DIR} \
             ./images/tabby_cat.jpg \
             ./labels/labels.txt \
             3 224 224 \
-            0 1 10 1 0 \
+            0 1 10 1  \
           "
 
 第一个参数：image_classification 可执行文件，属于必选项
@@ -187,7 +187,6 @@ adb shell "cd ${ADB_DIR} \
 第九个参数：1 线程数，属于可选项，默认是 1
 第十个参数：10 repeats 数目，属于可选项，默认是 1
 第十一个参数：1 warmup 数目，属于可选项，默认是 0
-第十二个参数：0 use_gpu 是否使用GPU， 属于可选项，默认是 0
 ```
 
 ## 进阶使用
@@ -260,7 +259,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 0 \
+              0 1 100 10  \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -271,7 +270,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels_new.txt \
               3 224 224 \
-              0 1 100 10 0 \
+              0 1 100 10  \
           "
 ```
 
@@ -294,7 +293,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 10 1 0 \
+              0 1 10 1  \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -305,7 +304,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/dog.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 10 1 0 \
+              0 1 10 1  \
           "
 ```
 

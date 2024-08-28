@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL_NAME=PP-LCNet_x1_0
-MODEL_LIST="PP-LCNet_x1_0 MobileNetV3_small_x1_0"
+MODEL_LIST="PP-LCNet_x1_0 MobileNetV3_small_x1_0 PP-LCNet_x1_0_gpu MobileNetV3_small_x1_0_gpu"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
@@ -51,5 +51,5 @@ adb shell "cd ${ADB_DIR} \
                ./images/tabby_cat.jpg \
                ./labels/labels.txt \
                3 224 224 \
-               0 1 10 1 0 \
+               0 1 10 1  \
                "

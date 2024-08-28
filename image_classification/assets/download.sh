@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL_NAME=PP-LCNet_x1_0
-MODEL_LIST="PP-LCNet_x1_0 MobileNetV3_small_x1_0"
+MODEL_LIST="PP-LCNet_x1_0 MobileNetV3_small_x1_0 PP-LCNet_x1_0_gpu MobileNetV3_small_x1_0_gpu"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
