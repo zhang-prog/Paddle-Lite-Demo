@@ -38,7 +38,7 @@ adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
 adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
 
 # run
-if [ "$MODEL_NAME" == "PicoDet_layout_1x" -o "$MODEL_NAME" == "PicoDet_layout_1x_gpu" ]; then
+if [ "$MODEL_NAME" = "PicoDet_layout_1x" -o "$MODEL_NAME" = "PicoDet_layout_1x_gpu" ]; then
   adb shell "cd ${ADB_DIR} \
             && chmod +x ./picodet_detection \
             && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
