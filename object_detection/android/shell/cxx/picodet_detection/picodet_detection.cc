@@ -152,6 +152,16 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
     int ymax = static_cast<int>(data[5 + i * 6]);
     int w = xmax - xmin;
     int h = ymax - ymin;
+    // std::cout<< "xmin:" << xmin << std::endl;
+    // std::cout<< "ymin:" << ymin << std::endl;
+    // std::cout<< "xmax:" << xmax << std::endl;
+    // std::cout<< "ymax:" << ymax << std::endl;
+    // std::cout<< "w:" << w << std::endl;
+    // std::cout<< "h:" << h << std::endl;
+
+    // std::cout<< "xmin:" << xmin << "\t" << "ymin:" << ymin << std::endl;
+    // std::cout<< "xmax:" << xmax << "\t" << "ymax:" << ymax << std::endl;
+    // std::cout<< "w:" << w << "\t" << "h:" << h << std::endl;
 
     cv::Rect rec_clip =
         cv::Rect(xmin, ymin, w, h) & cv::Rect(0, 0, image.cols, image.rows);
@@ -167,19 +177,16 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
       std::string str_prob = std::to_string(obj.prob);
       std::string text =
           obj.class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
-      int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
-      double font_scale = 1.f;
-      int thickness = 2;
+      const int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
+      const double font_scale = 0.9f;
+      const int thickness = 2;
       cv::Size text_size =
           cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-      float new_font_scale = w * 0.35 * font_scale / text_size.width;
-      text_size =
-          cv::getTextSize(text, font_face, new_font_scale, thickness, nullptr);
       cv::Point origin;
       origin.x = xmin + 10;
       origin.y = ymin + text_size.height + 10;
-      cv::putText(image, text, origin, font_face, new_font_scale,
-                  cv::Scalar(0, 255, 255), thickness, cv::LINE_AA);
+      cv::putText(image, text, origin, font_face, font_scale,
+                  cv::Scalar(255, 0, 0), thickness, cv::LINE_AA);
 
       std::cout << "detection, image size: " << image.cols << ", " << image.rows
                 << ", detect object: " << obj.class_name
@@ -300,7 +307,6 @@ int main(int argc, char **argv) {
   int repeats = 1;
   int power_mode = 0;
   int thread_num = 1;
-  int use_gpu = 0;
   if (argc > 6) {
     width = atoi(argv[5]);
     height = atoi(argv[6]);
@@ -317,22 +323,7 @@ int main(int argc, char **argv) {
   if (argc > 10) {
     warmup = atoi(argv[10]);
   }
-  if (argc > 11) {
-    use_gpu = atoi(argv[11]);
-  }
   std::cout << "model_file: " << model_file << "\n";
-  if (use_gpu) {
-    // check model file name
-    int start = model_file.find_first_of("/");
-    int end = model_file.find_last_of("/");
-    std::string model_name = model_file.substr(start + 1, end - start - 1);
-    std::cout << "model_name: " << model_name << "\n";
-    if (model_name.find("gpu") == model_name.npos) {
-      std::cerr << "[ERROR] predicted-model should use gpu model when use_gpu "
-                   "is true \n";
-      exit(1);
-    }
-  }
 
   run_model(model_file, img_path, labels, thresh, width, height, power_mode,
             thread_num, repeats, warmup);

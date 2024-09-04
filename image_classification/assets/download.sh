@@ -1,6 +1,18 @@
 #!/bin/bash
-MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/models/mobilenet_v1_for_cpu_v2_10.tar.gz"
-GPU_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/models/mobilenet_v1_for_gpu.tar.gz"
+MODEL_NAME=PP-LCNet_x1_0
+MODEL_LIST="PP-LCNet_x1_0 MobileNetV3_small_x1_0 PP-LCNet_x1_0_gpu MobileNetV3_small_x1_0_gpu"
+
+if [ -n "$1" ]; then
+  MODEL_NAME="$1"
+fi
+
+if ! echo "$MODEL_LIST" | grep -qw "$MODEL_NAME"; then
+  echo "Supported model: ${MODEL_LIST}"
+  echo "$MODEL_NAME is not in the support list. Exiting."
+  exit 1
+fi
+
+MODEL_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/image_classification/models/${MODEL_NAME}.tar.gz"
 
 MODELS_DIR="$(pwd)/models/"
 
@@ -22,6 +34,5 @@ download_and_uncompress() {
 }
 
 download_and_uncompress "${MODEL_URL}" "${MODELS_DIR}"
-download_and_uncompress "${GPU_MODEL_URL}" "${MODELS_DIR}"
 
 echo "Download successful!"

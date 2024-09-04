@@ -221,7 +221,6 @@ int main(int argc, char **argv) {
             << "  <thread_num>, eg: 1 for single thread \n"
             << "  <repeats>, eg: 100\n"
             << "  <warmup>, eg: 10\n"
-            << " <use_gpu>, eg: 0\n"
             << std::endl;
   std::string model_file = argv[1];
   std::string img_path = argv[2];
@@ -238,7 +237,6 @@ int main(int argc, char **argv) {
   int repeats = 1;
   int power_mode = 0;
   int thread_num = 1;
-  int use_gpu = 0;
   if (argc > 6) {
     width = atoi(argv[5]);
     height = atoi(argv[6]);
@@ -254,20 +252,6 @@ int main(int argc, char **argv) {
   }
   if (argc > 10) {
     warmup = atoi(argv[10]);
-  }
-  if (argc > 11) {
-    use_gpu = atoi(argv[11]);
-  }
-  if (use_gpu) {
-    // check model file name
-    int start = model_file.find_first_of("/");
-    int end = model_file.find_last_of("/");
-    std::string model_name = model_file.substr(start + 1, end - start - 1);
-    if (model_name.find("gpu") == model_name.npos) {
-      std::cerr << "[ERROR] predicted-model should use gpu model when use_gpu "
-                   "is true \n";
-      exit(1);
-    }
   }
 
   run_model(model_file, img_path, labels, topk, width, height, power_mode,
