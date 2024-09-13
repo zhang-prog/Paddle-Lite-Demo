@@ -2,6 +2,7 @@
 
 - [快速开始](#快速开始)
   - [环境准备](#环境准备)
+  - [物料准备](#物料准备)
   - [部署步骤](#部署步骤)
 - [代码介绍](#代码介绍)
 - [进阶使用](#进阶使用)
@@ -64,13 +65,25 @@
     744be294    device
     ```
 
+### 物料准备
+
+1. 克隆 `Paddle-Lite-Demo` 仓库的 `feature/paddle-x` 分支到 `PaddleX-Lite-Deploy` 目录。
+
+    ```shell
+    git clone -b feature/paddle-x https://github.com/PaddlePaddle/Paddle-Lite-Demo.git PaddleX-Lite-Deploy
+    ```
+
+2. 填写 [问卷]() 下载压缩包，将压缩包放到指定解压目录，切换到指定解压目录后执行解压命令。
+
+    ```shell
+    # 1. 切换到指定解压目录
+    cd PaddleX-Lite-Deploy/object_detection/android/shell/cxx/picodet_detection
+
+    # 2. 执行解压命令
+    unzip object_detection.zip
+    ```
+
 ### 部署步骤
-
-克隆 `Paddle-Lite-Demo` 仓库的 `feature/paddle-x` 分支到 `PaddleX-Lite-Deploy` 目录。
-
-```
-git clone -b feature/paddle-x https://github.com/PaddlePaddle/Paddle-Lite-Demo.git PaddleX_Lite_Deploy
-```
 
 1. 将工作目录切换到 `PaddleX-Lite-Deploy/libs` 目录，运行 `download.sh` 脚本，下载需要的 Paddle Lite 预测库。此步骤只需执行一次，即可支持每个 demo 使用。
 
@@ -82,6 +95,8 @@ git clone -b feature/paddle-x https://github.com/PaddlePaddle/Paddle-Lite-Demo.g
 
 **注意事项：**
   - 在运行 `build.sh` 脚本前，需要更改 `NDK_ROOT` 指定的路径为实际安装的 NDK 路径。
+  - 在 Windows 系统上可以使用 Git Bash 执行部署步骤。
+  - 若在 Windows 系统上编译，需要将 `CMakeLists.txt` 中的 `CMAKE_SYSTEM_NAME` 设置为 `windows`。
   - 若在 Mac 系统上编译，需要将 `CMakeLists.txt` 中的 `CMAKE_SYSTEM_NAME` 设置为 `darwin`。
   - 在运行 `run.sh` 脚本时需保持 ADB 连接。
   - `download.sh` 和 `run.sh` 支持传入参数来指定模型，若不指定则默认使用 `PicoDet-S` 模型。目前适配了 3 个模型： 
